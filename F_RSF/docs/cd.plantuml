@@ -1,0 +1,61 @@
+@startuml cd
+
+' TODO : correct parameter: type
+skinparam dpi 300
+skinparam monochrome true
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+hide circle
+hide footbox
+
+F_RSF "1" --* "1" Server
+
+F_RSF "1" --* "1" Client
+
+F_RSF "1" --* "1" Trainer
+
+F_RSF "1" --* "1" DataSource
+
+Server "1" -- "0..*" Client
+
+Client "0..*" -- "1" Trainer 
+Client "0..*" -- "1" DataSource 
+
+Server "1" -- "1" Trainer
+
+Server "1" -- "1" DataSource
+
+
+class Server {
+  Run()
+  aggregate_weights()
+}
+
+class Client {
+  start(client_id)
+  Weights: train()
+}
+
+class Trainer {
+
+  List[float]: train(trainset)
+  hyper_parameters: cross_validation()
+  List[float] test_client(weights, testset)
+  weights pick_best_trees(weights, numTrees)
+}
+
+class DataSource {
+  Array: datasets
+  Array: get_dataset()
+  Array: get_dataset(client_id)
+}
+
+class F_RSF {
+  Server: Server
+  Client: Client
+  Trainer: Trainer
+  DataSource: DataSource
+  F_RSF()
+}
+
+@enduml

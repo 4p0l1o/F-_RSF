@@ -1,0 +1,95 @@
+@startuml sd
+
+' TODO : correct parameter: type
+skinparam dpi 300
+skinparam monochrome true
+skinparam linetype polyline
+hide circle
+hide footbox
+skinparam ParticipantFontSize 14
+actor User as U 
+participant F_RSF
+participant Server
+participant Client
+participant Trainer
+participant DataSource
+
+U -> F_RSF: python F_RSF.py\n -c config.yml
+activate F_RSF
+F_RSF -> Trainer: new Trainer()
+activate Trainer
+Trainer -->> F_RSF: Trainer
+deactivate Trainer
+
+F_RSF -> DataSource: new DataSource()
+activate DataSource
+DataSource -> DataSource: get_dataset()
+DataSource -->> F_RSF: DataSource
+deactivate DataSource
+
+F_RSF -> Client: new Client(Trainer, Dataset)
+activate Client
+Client -->> F_RSF: Client
+deactivate Client
+
+F_RSF -> Server: new Server(Trainer,\n Dataset, Client)
+activate Server
+Server -->> F_RSF: Server
+deactivate Server
+F_RSF -> Server: Server.Run(Client)
+deactivate F_RSF
+activate Server
+
+loop for each client
+
+Server ->> Client: start(client_id)
+activate Client
+Server -> Client: train()
+deactivate Server
+
+Client -> DataSource: get_dataset(client_id)
+activate DataSource
+DataSource -->> Client: trainset, testset
+deactivate DataSource
+
+Client -> Trainer: train(transet)
+activate Trainer
+Trainer -> Trainer: cross_validation()
+
+Trainer -> Trainer: rsf.fit()
+Trainer -->> Client: weights
+deactivate Trainer
+
+Client -> Trainer: test_client(\nweights, testset)
+activate Trainer
+Trainer -->> Client: CI, IBS
+deactivate Trainer
+
+Client -> Trainer: pick_best_trees(\nweights, numTrees)
+activate Trainer
+Trainer -->> Client: weights
+deactivate Trainer
+
+Client -->> Server: weights
+deactivate Client
+
+activate Server
+
+Server -> Server: aggregate_weights(weights)
+
+end loop
+
+Server -->Trainer: test(updated_weights)
+activate Trainer
+
+Trainer -->> Server: CI, IBS
+deactivate Trainer
+
+Server -->Trainer: test_all_clients(updated_weights)
+activate Trainer
+
+Trainer -->> Server: CI, IBS
+deactivate Trainer
+
+
+@enduml

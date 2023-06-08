@@ -1,0 +1,55 @@
+@startuml sd_nonFed
+
+' TODO : correct parameter: type
+skinparam dpi 300
+skinparam monochrome true
+skinparam linetype polyline
+skinparam ParticipantFontSize 14
+hide circle
+hide footbox
+
+actor User as U 
+
+participant F_RSF
+participant Server
+participant Trainer
+participant DataSource
+
+U -> F_RSF: python F_RSF.py \n-c config.yml
+activate F_RSF
+F_RSF -> Trainer: new Trainer()
+activate Trainer
+Trainer -->> F_RSF: Trainer
+deactivate Trainer
+
+F_RSF -> DataSource: new DataSource()
+activate DataSource
+DataSource -> DataSource: get_dataset()
+DataSource -->> F_RSF: DataSource
+deactivate DataSource
+
+
+F_RSF -> Server: new Server(Trainer, Dataset)
+activate Server
+Server -->> F_RSF: Server
+deactivate Server
+F_RSF -> Server: Server.Run()
+deactivate F_RSF
+activate Server
+
+Server -> DataSource: get_dataset()
+activate DataSource
+DataSource -->> Server: trainset, testset
+deactivate DataSource
+
+Server -> Trainer: train(trainset)
+activate Trainer
+Trainer -->> Server: weights
+deactivate Trainer
+
+Server -->Trainer: test(weights)
+activate Trainer
+Trainer -->> Server: CI, IBS
+deactivate Trainer
+
+@enduml

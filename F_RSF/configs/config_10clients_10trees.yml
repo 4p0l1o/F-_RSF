@@ -1,0 +1,88 @@
+clients:
+    # Type
+    type: simple
+
+    # The total number of clients
+    total_clients: 10
+
+    # The number of clients selected in each round
+    per_round: 10
+
+    # Should the clients compute test accuracy locally?
+    do_test: true
+
+    random_seed: 1
+
+    sleep_simulation: true
+
+    # FedProx hyperparameters
+    proximal_term_penalty_constant: 1
+
+    # FedProx parameters for experiment
+    straggler_simulation: true
+    straggler_percentage: 50
+
+server:
+    address: 127.0.0.1
+    port: 8080
+    synchronous: true
+    do_test: true
+    do_baseline_test: false
+    #checkpoint_path: models/fedprox/mnist
+    #model_path: models/fedprox/mnist
+    n_trees: 10
+data:
+    # The training and testing dataset
+    datasource: nhanes
+    
+    test_size: 0.25
+
+    # Number of samples in each partition
+    partition_size: 600
+
+    # IID or non-IID?
+    sampler: noniid
+
+    # The concentration parameter for the Dirichlet distribution
+    concentration: 5
+
+    # The random seed for sampling data
+    random_seed: 1
+
+trainer:
+    # The type of the trainer
+    #type: basic
+    do_crossValidation: true
+    n_estimators: 5
+    min_samples_split: 6
+    min_samples_leaf: 5
+    max_features: "sqrt"
+    max_depth: 20
+    bootstrap: true
+    iter_rounds: 10
+    order_by: "ibs"
+    # The maximum number of training rounds
+    rounds: 1
+
+    # The maximum number of clients running concurrently
+    #max_concurrency: 3
+
+    # The target accuracy
+
+    # Number of epochs for local training in each communication round
+    epochs: 1
+    #batch_size: 10
+    #optimizer: SGD
+
+    # The machine learning model
+    #model_name: lenet5
+
+algorithm:
+    # Aggregation algorithm
+    type: fedavg
+
+parameters:
+    optimizer:
+        lr: 0.03
+        momentum: 0.0 # learning rate is fixed as in Appendix C.2
+        weight_decay: 0.0

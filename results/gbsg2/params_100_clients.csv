@@ -1,0 +1,9 @@
+client_id,n_estimators,min_samples_split,min_samples_leaf,max_features,max_depth,bootstrap
+3,300,6,1,log2,10,True
+1,600,10,1,sqrt,2,False
+2,300,2,3,sqrt,2,True
+4,700,10,4,sqrt,10,True
+5,300,6,3,sqrt,10,True
+8,100,10,1,log2,2,False
+9,200,2,3,log2,40,False
+7,1000,8,1,log2,2,True
